@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fabian | Moja strona</title>
+
+<style>
+
+/* =========================
+   PODSTAWA
+========================= */
+
+* {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+html {
+    scroll-padding-top: 80px;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #050509;
+    color: white;
+    overflow-x: hidden;
+    transition: background 0.5s, color 0.5s;
+}
+
+
+/* =========================
+   ANIMOWANE TŁO
+========================= */
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    filter: blur(130px);
+    opacity: 0.45;
+    z-index: -10;
+    pointer-events: none;
+}
+
+body::before {
+    background: #ff003c;
+    top: -150px;
+    left: -150px;
+    animation: blob1 10s infinite alternate ease-in-out;
+}
+
+body::after {
+    background: #3d00ff;
+    right: -150px;
+    bottom: -150px;
+    animation: blob2 12s infinite alternate ease-in-out;
+}
+
+@keyframes blob1 {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(180px, 120px) scale(1.3);
+    }
+}
+
+@keyframes blob2 {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(-150px, -100px) scale(1.25);
+    }
+}
+
+
+/* =========================
+   GWIAZDKI W TLE
+========================= */
+
+#stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -5;
+}
+
+.star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    animation: starMove linear infinite;
+}
+
+@keyframes starMove {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    text-align: center;
+    padding: 100px 20px 60px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: clamp(45px, 8vw, 80px);
+    letter-spacing: 3px;
+    animation: titleGlow 2s infinite alternate;
+}
+
+header p {
+    color: #aaa;
+    font-size: 19px;
+    animation: fadeIn 1.5s ease;
+}
+
+@keyframes titleGlow {
+    from {
+        transform: scale(1);
+        text-shadow:
+            0 0 10px red,
+            0 0 20px red;
+    }
+
+    to {
+        transform: scale(1.04);
+        text-shadow:
+            0 0 15px red,
+            0 0 35px red,
+            0 0 70px #6c00ff;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================
+   MENU
+========================= */
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 5000;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+
+    padding: 17px;
+
+    background: rgba(5, 5, 10, 0.75);
+    backdrop-filter: blur(18px);
+
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+nav a {
+    position: relative;
+
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #ff1744;
+    transform: translateY(-2px);
+}
+
+nav a::after {
+    content: "";
+
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+
+    width: 0;
+    height: 2px;
+
+    background: #ff1744;
+
+    transform: translateX(-50%);
+    transition: 0.3s;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+
+/* =========================
+   GŁÓWNA ZAWARTOŚĆ
+========================= */
+
+main {
+    width: min(1000px, 92%);
+    margin: auto;
+}
+
+
+/* =========================
+   KARTY
+========================= */
+
+.card {
+    position: relative;
+
+    margin: 45px 0;
+    padding: 35px;
+
+    border-radius: 25px;
+
+    background: rgba(255,255,255,0.07);
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 10px 50px rgba(0,0,0,0.35);
+
+    overflow: hidden;
+
+    opacity: 0;
+    transform: translateY(60px);
+
+    transition:
+        opacity 0.8s,
+        transform 0.8s,
+        box-shadow 0.4s;
+}
+
+.card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card:hover {
+    box-shadow:
+        0 15px 60px rgba(255,0,50,0.18);
+}
+
+.card h2 {
+    color: #ff304f;
+    font-size: 30px;
+    margin-top: 0;
+}
+
+
+/* ŚWIATŁO POD MYSZKĄ */
+
+.card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 250px;
+    height: 250px;
+
+    left: var(--mouse-x, -300px);
+    top: var(--mouse-y, -300px);
+
+    transform: translate(-50%, -50%);
+
+    background: radial-gradient(
+        circle,
+        rgba(255,0,80,0.18),
+        transparent 70%
+    );
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   ZAINTERESOWANIA
+========================= */
+
+.interests {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 20px;
+}
+
+.interest {
+    position: relative;
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.06);
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    text-align: center;
+
+    transition:
+        transform 0.3s,
+        box-shadow 0.3s,
+        background 0.3s;
+
+    overflow: hidden;
+}
+
+.interest:hover {
+    transform:
+        translateY(-12px)
+        scale(1.04)
+        rotateX(4deg);
+
+    background: rgba(255,255,255,0.1);
+
+    box-shadow:
+        0 15px 35px rgba(255,0,60,0.25);
+}
+
+.interest .emoji {
+    display: block;
+    font-size: 45px;
+    margin-bottom: 10px;
+
+    animation: emojiFloat 2s infinite ease-in-out;
+}
+
+@keyframes emojiFloat {
+
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.interest h3 {
+    margin: 8px 0;
+}
+
+
+/* =========================
+   PRZYCISKI
+========================= */
+
+button {
+    border: none;
+    border-radius: 30px;
+
+    padding: 14px 25px;
+
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+
+    cursor: pointer;
+
+    background: linear-gradient(
+        270deg,
+        #ff003c,
+        #8b00ff,
+        #0055ff,
+        #ff003c
+    );
+
+    background-size: 600% 600%;
+
+    animation: buttonGradient 5s ease infinite;
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+button:hover {
+    transform: scale(1.08);
+
+    box-shadow:
+        0 0 20px #ff003c,
+        0 0 40px rgba(120,0,255,0.5);
+}
+
+@keyframes buttonGradient {
+
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+/* =========================
+   PRZYCISK MOTYWU
+========================= */
+
+#themeButton {
+    position: fixed;
+
+    right: 20px;
+    top: 75px;
+
+    z-index: 6000;
+
+    width: 48px;
+    height: 48px;
+
+    padding: 0;
+
+    font-size: 21px;
+}
+
+
+/* =========================
+   PRZYCISK NA GÓRĘ
+========================= */
+
+#topButton {
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    z-index: 6000;
+
+    width: 50px;
+    height: 50px;
+
+    padding: 0;
+
+    font-size: 25px;
+
+    display: none;
+}
+
+
+/* =========================
+   KURSOR
+========================= */
+
+.cursorDot {
+    position: fixed;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    pointer-events: none;
+
+    z-index: 999999;
+
+    box-shadow:
+        0 0 10px white,
+        0 0 20px #ff1744;
+}
+
+
+/* =========================
+   FAJERWERKI
+========================= */
+
+#canvas {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    z-index: 99999;
+}
+
+
+/* =========================
+   STOPKA
+========================= */
+
+footer {
+    text-align: center;
+
+    padding: 50px 20px;
+
+    color: #777;
+}
+
+
+/* =========================
+   JASNY MOTYW
+========================= */
+
+body.light {
+    background: #eeeeee;
+    color: #111;
+}
+
+body.light nav {
+    background: rgba(255,255,255,0.8);
+}
+
+body.light nav a {
+    color: #111;
+}
+
+body.light .card {
+    background: rgba(255,255,255,0.65);
+}
+
+body.light .interest {
+    background: rgba(255,255,255,0.6);
+}
+
+body.light header p {
+    color: #444;
+}
+
+
+/* =========================
+   TELEFON
+========================= */
+
+@media (max-width: 600px) {
+
+    header {
+        padding-top: 70px;
+    }
+
+    header h1 {
+        font-size: 45px;
+    }
+
+    nav {
+        gap: 15px;
+    }
+
+    .card {
+        padding: 25px;
+    }
+
+    #themeButton {
+        top: 120px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- GWIAZDKI -->
+
+<div id="stars"></div>
+
+
+<!-- NAGŁÓWEK -->
+
+<header>
+
+    <h1>MOJA STRONA</h1>
+
+    <p>Witaj na mojej stronie 🚀</p>
+
+</header>
+
+
+<!-- MENU -->
+
+<nav>
+
+    <a href="#omnie">O mnie</a>
+
+    <a href="#zainteresowania">
+        Zainteresowania
+    </a>
+
+    <a href="#kontakt">
+        Kontakt
+    </a>
+
+</nav>
+
+
+<!-- ZMIANA MOTYWU -->
+
+<button id="themeButton" onclick="zmienMotyw()">
+    🌙
+</button>
+
+
+<main>
+
+
+<!-- O MNIE -->
+
+<section id="omnie" class="card">
+
+    <h2>👋 O mnie</h2>
+
+    <p>
+        Cześć! Mam na imię Fabian.
+        Interesuję się motocyklami, motoryzacją,
+        ciężarówkami, komputerami i technologią.
+    </p>
+
+    <p>
+        Lubię również nagrywać filmy,
+        robić zdjęcia i majsterkować
+        przy różnych rzeczach.
+    </p>
+
+</section>
+
+
+<!-- ZAINTERESOWANIA -->
+
+<section id="zainteresowania" class="card">
+
+    <h2>🔥 Moje zainteresowania</h2>
+
+
+    <div class="interests">
+
+
+        <div class="interest">
+
+            <span class="emoji">🏍️</span>
+
+            <h3>Motocykle</h3>
+
+            <p>
+                Jazda, motocross
+                i majsterkowanie.
+            </p>
+
+        </div>
+
+
+        <div class="interest">
+
+            <span class="emoji">🚛</span>
+
+            <h3>Ciężarówki</h3>
+
+            <p>
+                Truck spotting
+                i nagrywanie ciężarówek.
+            </p>
+
+        </div>
+
+
+        <div class="interest">
+
+            <span class="emoji">💻</span>
+
+            <h3>Komputery</h3>
+
+            <p>
+                Gry, sprzęt
+                i technologie.
+            </p>
+
+        </div>
+
+
+        <div class="interest">
+
+            <span class="emoji">🎥</span>
+
+            <h3>Filmy</h3>
+
+            <p>
+                Nagrywanie
+                i robienie zdjęć.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- KONTAKT -->
+
+<section id="kontakt" class="card">
+
+    <h2>📱 Kontakt</h2>
+
+    <p>
+        Dzięki za odwiedzenie mojej strony!
+    </p>
+
+    <button onclick="powitanie()">
+        Kliknij mnie 😎
+    </button>
+
+</section>
+
+
+</main>
+
+
+<!-- STOPKA -->
+
+<footer>
+
+    © 2026 Moja strona
+
+</footer>
+
+
+<!-- NA GÓRĘ -->
+
+<button id="topButton" onclick="window.scrollTo(0,0)">
+    ↑
+</button>
+
+
+<!-- FAJERWERKI -->
+
+<canvas id="canvas"></canvas>
+
+
+<script>
+
+/* =========================
+   POWITANIE
+========================= */
+
+function powitanie() {
+
+    alert(
+        "Siema! 👋 Dzięki za odwiedzenie mojej strony!"
+    );
+
+}
+
+
+/* =========================
+   ANIMACJA SEKCJI
+========================= */
+
+const cards =
+    document.querySelectorAll(".card");
+
+
+function pokazSekcje() {
+
+    cards.forEach(card => {
+
+        const position =
+            card.getBoundingClientRect().top;
+
+        if (
+            position <
+            window.innerHeight - 100
+        ) {
+
+            card.classList.add("show");
+
+        }
+
+    });
+
+}
+
+window.addEventListener(
+    "scroll",
+    pokazSekcje
+);
+
+pokazSekcje();
+
+
+/* =========================
+   PRZYCISK NA GÓRĘ
+========================= */
+
+window.addEventListener(
+    "scroll",
+    function() {
+
+        const button =
+            document.getElementById(
+                "topButton"
+            );
+
+        if (window.scrollY > 400) {
+
+            button.style.display =
+                "block";
+
+        } else {
+
+            button.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   ZMIANA MOTYWU
+========================= */
+
+function zmienMotyw() {
+
+    document.body.classList.toggle(
+        "light"
+    );
+
+    const button =
+        document.getElementById(
+            "themeButton"
+        );
+
+    if (
+        document.body.classList.contains(
+            "light"
+        )
+    ) {
+
+        button.innerHTML = "🌞";
+
+    } else {
+
+        button.innerHTML = "🌙";
+
+    }
+
+}
+
+
+/* =========================
+   SMUGA ZA MYSZKĄ
+========================= */
+
+document.addEventListener(
+    "mousemove",
+    function(event) {
+
+        const dot =
+            document.createElement(
+                "div"
+            );
+
+        dot.className =
+            "cursorDot";
+
+        dot.style.left =
+            event.clientX + "px";
+
+        dot.style.top =
+            event.clientY + "px";
+
+        document.body.appendChild(dot);
+
+
+        setTimeout(function() {
+
+            dot.style.transition =
+                "0.5s";
+
+            dot.style.opacity =
+                "0";
+
+            dot.style.transform =
+                "scale(0)";
+
+        }, 20);
+
+
+        setTimeout(function() {
+
+            dot.remove();
+
+        }, 550);
+
+    }
+);
+
+
+/* =========================
+   ŚWIATŁO ZA MYSZKĄ
+========================= */
+
+document.querySelectorAll(
+    ".card"
+).forEach(card => {
+
+    card.addEventListener(
+        "mousemove",
+        function(event) {
+
+            const rect =
+                card.getBoundingClientRect();
+
+            const x =
+                event.clientX -
+                rect.left;
+
+            const y =
+                event.clientY -
+                rect.top;
+
+            card.style.setProperty(
+                "--mouse-x",
+                x + "px"
+            );
+
+            card.style.setProperty(
+                "--mouse-y",
+                y + "px"
+            );
+
+        }
+    );
+
+});
+
+
+/* =========================
+   GWIAZDKI
+========================= */
+
+const stars =
+    document.getElementById(
+        "stars"
+    );
+
+
+for (let i = 0; i < 70; i++) {
+
+    const star =
+        document.createElement(
+            "div"
+        );
+
+    star.className =
+        "star";
+
+    star.style.left =
+        Math.random() * 100 + "vw";
+
+    star.style.top =
+        Math.random() * -100 + "vh";
+
+    star.style.animationDuration =
+        (Math.random() * 5 + 4) + "s";
+
+    star.style.animationDelay =
+        Math.random() * 5 + "s";
+
+    star.style.opacity =
+        Math.random();
+
+    stars.appendChild(star);
+
+}
+
+
+/* =========================
+   FAJERWERKI
+========================= */
+
+const canvas =
+    document.getElementById(
+        "canvas"
+    );
+
+const ctx =
+    canvas.getContext("2d");
+
+
+canvas.width =
+    window.innerWidth;
+
+canvas.height =
+    window.innerHeight;
+
+
+let particles = [];
+
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        for (
+            let i = 0;
+            i < 100;
+            i++
+        ) {
+
+            const angle =
+                Math.random() *
+                Math.PI * 2;
+
+            const speed =
+                Math.random() * 7 + 2;
+
+
+            particles.push({
+
+                x: event.clientX,
+
+                y: event.clientY,
+
+                vx:
+                    Math.cos(angle) *
+                    speed,
+
+                vy:
+                    Math.sin(angle) *
+                    speed,
+
+                life: 1,
+
+                color:
+                    "hsl(" +
+                    Math.random() * 360 +
+                    ",100%,60%)"
+
+            });
+
+        }
+
+    }
+);
+
+
+/* ANIMACJA FAJERWERKÓW */
+
+function animate() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    for (
+        let i = particles.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const p =
+            particles[i];
+
+
+        p.x += p.vx;
+
+        p.y += p.vy;
+
+        p.vy += 0.12;
+
+        p.life -= 0.015;
+
+
+        ctx.globalAlpha =
+            p.life;
+
+        ctx.fillStyle =
+            p.color;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            3,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+
+        if (p.life <= 0) {
+
+            particles.splice(
+                i,
+                1
+            );
+
+        }
+
+    }
+
+
+    ctx.globalAlpha = 1;
+
+
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+
+animate();
+
+
+/* =========================
+   ZMIANA ROZMIARU OKNA
+========================= */
+
+window.addEventListener(
+    "resize",
+    function() {
+
+        canvas.width =
+            window.innerWidth;
+
+        canvas.height =
+            window.innerHeight;
+
+    }
+);
+
+</script>
+
+
+</body>
+</html>
